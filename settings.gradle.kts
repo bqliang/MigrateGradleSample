@@ -13,4 +13,4 @@ dependencyResolutionManagement {
     }
 }
 rootProject.name = "Migrate Gradle Sample"
-include ':app'
+include("app")

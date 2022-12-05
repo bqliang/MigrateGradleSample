@@ -1,3 +1,6 @@
+val appVersionCode: Int by rootProject.extra
+val appVersionName: String by rootProject.extra
+
 plugins {
     id("com.android.application")
     kotlin("android")
@@ -11,20 +14,54 @@ android {
         applicationId = "com.bqliang.migrate.gradle.sample"
         minSdk = 26
         targetSdk = 33
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = appVersionCode
+        versionName = appVersionName
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    signingConfigs {
+        signingConfigs.create("release") {
+            storeFile = file("../key.jks")
+            storePassword = System.getenv("KEY_STORE_PASSWORD")
+            keyAlias = System.getenv("SIGNING_KEY_ALIAS")
+            keyPassword = System.getenv("KEY_PASSWORD")
+        }
+    }
+
     buildTypes {
-        getByName("release") {
+        debug {
+            isMinifyEnabled = false
+            applicationIdSuffix = ".debug"
+        }
+        release {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.getByName(name)
+        }
+        /* 第二种写法
+        all {
+            signingConfig = if (name == "release") {
+                signingConfigs.create("release") {
+                    storeFile = file("../key.jks")
+                    storePassword = System.getenv("KEY_STORE_PASSWORD")
+                    keyAlias = System.getenv("SIGNING_KEY_ALIAS")
+                    keyPassword = System.getenv("KEY_PASSWORD")
+                }
+            } else { signingConfigs.getByName("debug") }
+        }
+        */
+    }
+
+    applicationVariants.configureEach {
+        outputs.configureEach {
+            (this as? com.android.build.gradle.internal.api.ApkVariantOutputImpl)?.outputFileName =
+                "${rootProject.name}-${versionName}-${name/* variant name */}.apk"
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
@@ -34,6 +71,14 @@ android {
     }
     buildFeatures {
         viewBinding = true
+    }
+    sourceSets.getByName("main").res {
+        val srcDirs = listOf(
+            "settings"
+        )
+            .map { "src/main/java/com/bqliang/migrate/gradle/sample/$it/res" }
+            .plus("src/main/res")
+        setSrcDirs(srcDirs)
     }
 }
 

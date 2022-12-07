@@ -1,0 +1,35 @@
+[versions] # used to declare versions which can be referenced by dependencies
+android-gradle-plugin = "7.3.1"
+kotlin = "1.7.21"
+androidX-room = "2.4.3"
+appCenter = "5.0.0"
+
+
+[plugins] # used to declare plugins
+android-application = { id = "com.android.application", version.ref = "android-gradle-plugin" }
+android-library = { id = "com.android.library", version.ref = "android-gradle-plugin" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+secrets = { id = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin", version = "2.0.1" }
+kotlinx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+ksp = { id = "com.google.devtools.ksp", version = "1.7.21-1.0.8" }
+
+
+[libraries] # used to declare the aliases to coordinates
+gradlePlugin-android = { module = "com.android.tools.build:gradle", version.ref = "android-gradle-plugin" }
+gradlePlugin-kotlin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
+
+kotlinX-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version = "1.4.1" }
+
+androidX-core = "androidx.core:core-ktx:1.9.0"
+androidX-appCompat = "androidx.appcompat:appcompat:1.5.1"
+androidX-constraintLayout = "androidx.constraintlayout:constraintlayout:2.1.4"
+
+google-material = "com.google.android.material:material:1.7.0"
+
+androidX-room-compiler = { module = "androidx.room:room-compiler", version.ref = "androidX-room" }
+androidX-room-ktx = { module = "androidx.room:room-ktx", version.ref = "androidX-room" }
+androidX-room-runtime = { module = "androidx.room:room-runtime", version.ref = "androidX-room" }
+
+
+[bundles] #  used to declare dependency bundles
+androidX-room = ["androidX-room-runtime", "androidX-room-ktx"]

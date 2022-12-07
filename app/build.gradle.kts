@@ -1,9 +1,13 @@
 val appVersionCode: Int by rootProject.extra
 val appVersionName: String by rootProject.extra
 
+@Suppress("DSL_SCOPE_VIOLATION") // https://youtrack.jetbrains.com/issue/KTIJ-19369
 plugins {
-    id("com.android.application")
-    kotlin("android")
+    alias(libs.plugins.android.application)
+    kotlin("android") // alias(libs.plugins.kotlin.android)
+    kotlin("kapt")
+    kotlin("plugin.serialization") // alias(libs.plugins.kotlinx.serialization)
+    alias(libs.plugins.secrets) // Secrets Gradle Plugin for Android: https://github.com/google/secrets-gradle-plugin
 }
 
 android {
@@ -17,7 +21,11 @@ android {
         versionCode = appVersionCode
         versionName = appVersionName
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        javaCompileOptions {
+            annotationProcessorOptions {
+                argument("room.schemaLocation", "$projectDir/schemas")
+            }
+        }
     }
 
     signingConfigs {
@@ -30,11 +38,11 @@ android {
     }
 
     buildTypes {
-        debug {
+        getByName("debug") {
             isMinifyEnabled = false
             applicationIdSuffix = ".debug"
         }
-        release {
+        getByName("release") {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
@@ -83,8 +91,11 @@ android {
 }
 
 dependencies {
-    implementation("androidx.core:core-ktx:1.9.0")
-    implementation("androidx.appcompat:appcompat:1.5.1")
-    implementation("com.google.android.material:material:1.7.0")
-    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
+    implementation(libs.kotlinX.serialization.json)
+    kapt(libs.androidX.room.compiler)
+    implementation(libs.bundles.androidX.room)
+    implementation(libs.androidX.core)
+    implementation(libs.androidX.appCompat)
+    implementation(libs.google.material)
+    implementation(libs.androidX.constraintLayout)
 }
